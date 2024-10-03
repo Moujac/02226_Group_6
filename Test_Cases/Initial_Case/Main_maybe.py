@@ -28,11 +28,14 @@ def read_streams(filename):
                 'dest': dest,
                 'size': int(size),
                 'period': int(period),
-                'deadline': int(deadline)
+                'deadline': int(deadline),
+                'path': [],
+                'priority': int(pcp),  # Assuming PCP represents priority
+                'min_frame_length': int(size),  # Assuming minimum frame length is the given size
+                'max_frame_length': int(size),  # Assuming maximum frame length is the given size
+                'reserved_data_rate': int(size) / int(period),  # r_f = size / period
+                'burst_size': int(size)  # b_f = size
             }
-            # Calculate ATS-specific parameters
-            stream['burst_size'] = stream['size']  # b = size
-            stream['committed_rate'] = stream['size'] / stream['period']  # r = size / period
             streams.append(stream)
     return streams
 
@@ -55,28 +58,41 @@ def dijkstra(graph, start, end):
 
     return float('inf'), []
 
-def calculate_worst_case_delay(stream, path_length):
-    # This is a simplified calculation and should be replaced with a more accurate model
-    # based on network calculus or other appropriate methods for ATS streams
-    transmission_time = stream['size'] * 8 / (10 ** 9)  # Assuming 1 Gbps links
-    propagation_delay = 0.1 * path_length  # Assuming 0.1 ms propagation delay per hop
-    queuing_delay = stream['size'] / stream['committed_rate']
-    
-    return (transmission_time + propagation_delay + queuing_delay) * 10**6  # Convert to microseconds
+def calculate_per_hop_delay(stream, link_rate):
+    # This is a simplified version of the formula. In a real implementation,
+    # you would need to consider all streams sharing the same link and their interactions.
+    b_H = 1500  # Assuming maximum frame size of higher priority traffic
+    b_C = 1500  # Assuming maximum frame size of same priority traffic
+    b_f = stream['burst_size']
+    l_f = stream['min_frame_length']
+    L_f = stream['max_frame_length']
+    r = link_rate
+    r_H = link_rate / 2  # Assuming higher priority traffic takes half the link rate
+
+    delay = (b_H + b_C + b_f - l_f + L_f) / (r - r_H) + L_f / r
+    return delay * 1e6  # Convert to microseconds
+
+def calculate_worst_case_delay(stream, path, link_rate):
+    total_delay = 0
+    for _ in range(len(path) - 1):  # For each hop
+        total_delay += calculate_per_hop_delay(stream, link_rate)
+    return total_delay
 
 def main():
     topology = read_topology('example_topology.csv')
     streams = read_streams('example_streams.csv')
+    link_rate = 1e9  # Assuming 1 Gbps links
 
     with open('solution.csv', 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['StreamName', 'MaxE2E(us)', 'Deadline(us)', 'Path'])
 
         for stream in streams:
-            cost, path = dijkstra(topology, stream['source'], stream['dest'])
+            _, path = dijkstra(topology, stream['source'], stream['dest'])
+            stream['path'] = path
             
             # Calculate worst-case delay
-            max_e2e = calculate_worst_case_delay(stream, len(path) - 1)
+            max_e2e = calculate_worst_case_delay(stream, path, link_rate)
 
             writer.writerow([
                 stream['name'],
