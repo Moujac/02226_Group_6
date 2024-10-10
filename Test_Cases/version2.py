@@ -82,25 +82,23 @@ def calculate_per_hop_delay(stream, link_rate, interfering_streams, higher_prior
     return delay * 1e6  
 
 
-def calculate_worst_case_delay(stream, path, graph, link_rate):
+def calculate_worst_case_delay(all_streams, stream, path, graph, link_rate):
     total_delay = 0
     for i in range(len(path) - 1):
         source = path[i]
         dest = path[i + 1]
         
-  
-        interfering_streams = find_interfering_streams(stream, graph[source], path) # find set I
-        
+        interfering_streams = find_interfering_streams(all_streams, stream, graph[source], path) # find set I
 
         higher_priority_rate = sum(s['reserved_data_rate'] for s in interfering_streams if s['priority'] > stream['priority'])
         
 
-        total_delay += calculate_per_hop_delay(stream, link_rate, interfering_streams, higher_priority_rate)
+        total_delay = max(total_delay,calculate_per_hop_delay(stream, link_rate, interfering_streams, higher_priority_rate)) 
         
     return total_delay
 
 
-def find_interfering_streams(current_stream, neighbors, path):
+def find_interfering_streams(streams, current_stream, neighbors, path):
     interfering_streams = []
     for stream in streams:
         if stream['source'] in neighbors and stream['dest'] in path:
@@ -108,8 +106,8 @@ def find_interfering_streams(current_stream, neighbors, path):
     return interfering_streams
 
 def main():
-    topology = read_topology('example_topology.csv')
-    streams = read_streams('example_streams.csv')
+    topology = read_topology('./Small_Case/small-topology.csv')
+    streams = read_streams('./Small_Case/small-streams.csv')
     link_rate = 1e9
 
     with open('solution.csv', 'w', newline='') as f:
@@ -121,7 +119,7 @@ def main():
             stream['path'] = path
 
         
-            max_e2e = calculate_worst_case_delay(stream, path, topology, link_rate)
+            max_e2e = calculate_worst_case_delay(streams, stream, path, topology, link_rate)
 
             writer.writerow([
                 stream['name'],
