@@ -84,25 +84,62 @@ def calculate_per_hop_delay(link_rate, interfering_streams, higher_priority_rate
 
 def calculate_worst_case_delay(all_streams, stream, path, graph, link_rate):
     total_delay = 0
+    interfering_streams = find_interfering_streams(all_streams, stream, path)  # find set I
+
     for i in range(len(path) - 1):
         source = path[i]
-        dest = path[i + 1]
-        
-        interfering_streams = find_interfering_streams(all_streams, stream, graph[source], path) # find set I
+        # dest = path[i + 1]
 
-        higher_priority_rate = sum(s['reserved_data_rate'] for s in interfering_streams if s['priority'] > stream['priority'])
+        interfering_streams_at_node = interfering_streams.get(source, [])
+        higher_priority_rate = sum(s['reserved_data_rate'] for s in interfering_streams_at_node if s['priority'] > stream['priority'])
         
-        total_delay += calculate_per_hop_delay(link_rate, interfering_streams, higher_priority_rate)
+        total_delay += calculate_per_hop_delay(link_rate, interfering_streams_at_node, higher_priority_rate)
     
     return total_delay
 
+def find_interfering_streams(streams, current_stream, path):
+    interfering_streams_per_node = {}  
 
-def find_interfering_streams(streams, current_stream, neighbors, path):
-    interfering_streams = []
-    for stream in streams:
-        if stream['source'] in neighbors and stream['dest'] in path:
-            interfering_streams.append(stream)
-    return interfering_streams
+    for i in range(len(path) - 1):
+        current_node = path[i]
+        next_node = path[i + 1]
+        
+        interfering_streams_per_node[current_node] = []
+
+        for stream in streams:
+            if stream == current_stream:
+                continue  
+
+            if stream['source'] == current_stream['source'] and stream['dest'] == current_stream['dest']:
+                continue  
+
+            stream_path = stream.get('path', [])
+            if current_node not in stream_path or next_node not in stream_path:
+                continue  
+
+            if not violates_qars(current_stream, stream, current_node):
+                interfering_streams_per_node[current_node].append(stream)
+
+    return interfering_streams_per_node
+
+
+def violates_qars(current_stream, interfering_stream, current_node):
+
+    # QAR1: two stream come from different port
+    if current_stream['source'] != interfering_stream['source']:
+        return True
+
+    # QAR2: two streams coming from the same port but have different priorities
+    if current_stream['source'] == interfering_stream['source'] and current_stream['priority'] != interfering_stream['priority']:
+        return True
+
+    # QAR3: two streams sent by the same node but have different priorities
+    if current_node == current_stream['source'] or current_node == interfering_stream['source']:
+        if current_stream['priority'] != interfering_stream['priority']:
+            return True
+
+    return False
+
 
 def main():
     topology = read_topology('./Small_Case/small-topology.csv')
