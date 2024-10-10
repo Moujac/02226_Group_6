@@ -61,24 +61,24 @@ def dijkstra(graph, start, end):
     return float('inf'), []
 
 
-def calculate_per_hop_delay(stream, link_rate, interfering_streams, higher_priority_rate):
+def calculate_per_hop_delay(link_rate, interfering_streams, higher_priority_rate):
+    delay = 0
+    for stream in interfering_streams:
+        b_H = sum(s['burst_size'] for s in interfering_streams if s['priority'] > stream['priority'])  
+        b_C = sum(s['burst_size'] for s in interfering_streams if s['priority'] == stream['priority'] and s != stream)  
+        b_f = stream['burst_size']
+        l_f = stream['min_frame_length']
+        L_f = stream['max_frame_length']
+        r = link_rate
+        r_H = higher_priority_rate  
 
-    b_H = sum(s['burst_size'] for s in interfering_streams if s['priority'] > stream['priority'])  
-    b_C = sum(s['burst_size'] for s in interfering_streams if s['priority'] == stream['priority'] and s != stream)  
-    b_f = stream['burst_size']
-    l_f = stream['min_frame_length']
-    L_f = stream['max_frame_length']
-    r = link_rate
-    r_H = higher_priority_rate  
+        accumulated_burst = b_H + b_C + b_f - l_f
+        remaining_bandwidth = r - r_H
+        lower_frame_trans = L_f
+        transmission_delay = L_f / r
 
+        delay = max(delay, (accumulated_burst + lower_frame_trans) / remaining_bandwidth + transmission_delay)
 
-    accumulated_burst = b_H + b_C + b_f - l_f
-    remaining_bandwidth = r - r_H
-    lower_frame_trans = L_f
-    transmission_delay = L_f / r
-
-
-    delay = (accumulated_burst + lower_frame_trans) / remaining_bandwidth + transmission_delay
     return delay * 1e6  
 
 
@@ -92,9 +92,8 @@ def calculate_worst_case_delay(all_streams, stream, path, graph, link_rate):
 
         higher_priority_rate = sum(s['reserved_data_rate'] for s in interfering_streams if s['priority'] > stream['priority'])
         
-
-        total_delay = max(total_delay,calculate_per_hop_delay(stream, link_rate, interfering_streams, higher_priority_rate)) 
-        
+        total_delay += calculate_per_hop_delay(link_rate, interfering_streams, higher_priority_rate)
+    
     return total_delay
 
 
