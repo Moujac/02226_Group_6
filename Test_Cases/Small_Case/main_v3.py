@@ -3,6 +3,9 @@ import networkx as nx
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 
+Link_speed=8/1e9 # Assume 1 Gbps link speed
+Propagation_delay=1e-6 # Assuming 1 microsecond propagation delay
+
 @dataclass
 class Stream:
     id: str
@@ -34,7 +37,7 @@ class ATSAnalysisTool:
         self.streams: List[Stream] = []
         self.topology: nx.Graph = nx.Graph()
         self.links: Dict[str, Link] = {}
-        self.queues: Dict[str, Dict[str, List[Queue]]] = {}  # node -> {output_port: list of queues}
+        self.queues: Dict[str, Dict[str, List[Queue]]] = {}  
 
 
     def read_streams(self, filename: str):
@@ -42,7 +45,7 @@ class ATSAnalysisTool:
             reader = csv.reader(f)
             for row in reader:
                 self.streams.append(Stream(
-                    id=f"Flow_{row[1][5:]}",  # Extract number from Flow_X
+                    id=f"Flow_{row[1][5:]}",  
                     pcp=int(row[0]),
                     stream_type=row[2],
                     source=row[3],
@@ -65,7 +68,7 @@ class ATSAnalysisTool:
                     link = Link(row[1], row[2], int(row[3]), row[4], int(row[5]))
                     self.links[link.id] = link
                     self.topology.add_edge(link.source, link.destination, link_id=link.id)
-                    # Initialize queues for the source node's output port
+                    
                     if link.source_port not in self.queues[link.source]:
                         self.queues[link.source][str(link.source_port)] = []
 
@@ -75,11 +78,11 @@ class ATSAnalysisTool:
                 stream.path = nx.shortest_path(self.topology, stream.source, stream.destination)
             except nx.NetworkXNoPath:
                 print(f"No path found for stream {stream.id} from {stream.source} to {stream.destination}")
-                stream.path = []  # Set an empty path if no path is found
+                stream.path = []  
     def assign_streams_to_queues(self):
         for stream in self.streams:
             if not stream.path:
-                continue  # Skip streams with no valid path
+                continue  
             for i in range(len(stream.path) - 1):
                 current_node = stream.path[i]
                 next_node = stream.path[i + 1]
@@ -90,7 +93,6 @@ class ATSAnalysisTool:
 
     def assign_stream_to_queue(self, stream: Stream, node: str, output_port: str):
         if node not in self.queues or output_port not in self.queues[node]:
-            # Initialize queues for this node and port if they don't exist
             self.queues.setdefault(node, {})[output_port] = []
         
         queue_list = self.queues[node][output_port]
@@ -101,8 +103,8 @@ class ATSAnalysisTool:
         appropriate_queue.streams.append(stream)
 
     def calculate_hop_delay(self, stream: Stream, node: str, output_port: str) -> float:
-        transmission_delay = stream.size * 8 / 1e9  # Assuming 1 Gbps link speed
-        propagation_delay = 1e-6  # Assuming 1 microsecond propagation delay
+        transmission_delay = stream.size * Link_speed  
+        propagation_delay = Propagation_delay  
         
         if node in self.queues and output_port in self.queues[node]:
             queue_list = self.queues[node][output_port]
@@ -138,7 +140,6 @@ class ATSAnalysisTool:
 
     def write_solution(self, filename: str):
         with open(filename, 'w', newline='') as f:
-            # Instead of using csv.writer, manually write the header and rows
             f.write("Flow, maxE2E (us), Deadline (us), Path SourceName:LinkID:QueueNumber->...\n")
             for stream in self.streams:
                 if not stream.path:
@@ -147,7 +148,6 @@ class ATSAnalysisTool:
                     path_str = "->".join(f"{node}:{self.get_link_and_queue(stream, i)}"
                                         for i, node in enumerate(stream.path[:-1]))
                     path_str += f"->{stream.path[-1]}"
-                # Manually write each row formatted without quotes
                 f.write(f"{stream.id},{stream.max_e2e:.3f},{stream.deadline},{path_str}\n")
                 
     def get_link_and_queue(self, stream: Stream, index: int) -> str:
@@ -160,12 +160,16 @@ class ATSAnalysisTool:
         queue_number = next(i for i, q in enumerate(queue_list) if stream in q.streams)
         return f"{link_id}:{queue_number}"
 
+    def print_total_max_delay(self):
+        total_max_delay = sum(stream.max_e2e for stream in self.streams)
+        print(f"Total Maximum Delay for all streams: {total_max_delay:.3f} microseconds, if the Link Speed is : {Link_speed} and the Propagation Delay is : {Propagation_delay}")
 
 def main():
     tool = ATSAnalysisTool()
     tool.read_streams('small-streams.csv')
     tool.read_topology('small-topology.csv')
     tool.analyze()
+    tool.print_total_max_delay()
     tool.write_solution('small-solution_test.csv')
 
 if __name__ == "__main__":
