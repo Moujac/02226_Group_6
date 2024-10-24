@@ -3,8 +3,8 @@ import networkx as nx
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple
 
-Link_speed=8/1e9 # Assume 1 Gbps link speed
-Propagation_delay=1e-6 # Assuming 1 microsecond propagation delay
+Link_speed = 1e9  # Assume 1 Gbps link speed
+Propagation_delay = 1e-6  # Assuming 1 microsecond propagation delay
 
 @dataclass
 class Stream:
@@ -30,15 +30,15 @@ class Link:
 @dataclass
 class Queue:
     priority: int
+    ingress_node: str  # Add source node for QAR1 compliance
     streams: List[Stream] = field(default_factory=list)
-    
+
 class ATSAnalysisTool:
     def __init__(self):
         self.streams: List[Stream] = []
         self.topology: nx.Graph = nx.Graph()
         self.links: Dict[str, Link] = {}
         self.queues: Dict[str, Dict[str, List[Queue]]] = {}  
-
 
     def read_streams(self, filename: str):
         with open(filename, 'r') as f:
@@ -55,7 +55,6 @@ class ATSAnalysisTool:
                     deadline=int(row[7])
                 ))
 
-    
     def read_topology(self, filename: str):
         with open(filename, 'r') as f:
             reader = csv.reader(f)
@@ -79,6 +78,7 @@ class ATSAnalysisTool:
             except nx.NetworkXNoPath:
                 print(f"No path found for stream {stream.id} from {stream.source} to {stream.destination}")
                 stream.path = []  
+
     def assign_streams_to_queues(self):
         for stream in self.streams:
             if not stream.path:
@@ -96,26 +96,38 @@ class ATSAnalysisTool:
             self.queues.setdefault(node, {})[output_port] = []
         
         queue_list = self.queues[node][output_port]
-        appropriate_queue = next((q for q in queue_list if q.priority == stream.pcp), None)
+        # Ensure streams from different ingress nodes are placed in different queues (QAR1)
+        appropriate_queue = next((q for q in queue_list if q.priority == stream.pcp and q.ingress_node == stream.source), None)
+        
         if not appropriate_queue:
-            appropriate_queue = Queue(priority=stream.pcp)
+            # Create a new queue if none matches both the priority and ingress node
+            appropriate_queue = Queue(priority=stream.pcp, ingress_node=stream.source)
             queue_list.append(appropriate_queue)
         appropriate_queue.streams.append(stream)
 
     def calculate_hop_delay(self, stream: Stream, node: str, output_port: str) -> float:
-        transmission_delay = stream.size * Link_speed  
+        transmission_delay = (stream.size * 8)/Link_speed  
         propagation_delay = Propagation_delay  
         
         if node in self.queues and output_port in self.queues[node]:
             queue_list = self.queues[node][output_port]
-            interference_delay = sum(
-                sum(s.size * 8 / 1e9 for s in q.streams if s.pcp >= stream.pcp and s != stream)
-                for q in queue_list
-            )
+            
+            # Worst-case delay calculation based on the formula components
+            b_H = sum((s.size * 8) / Link_speed for q in queue_list for s in q.streams if s.pcp > stream.pcp)
+            b_C = sum((s.size * 8) / Link_speed for q in queue_list for s in q.streams if s.pcp == stream.pcp and s != stream)
+            l_L = max(((s.size * 8) / Link_speed for q in queue_list for s in q.streams if s.pcp < stream.pcp), default=0)
+            r_H = 0  # Reserved bandwidth for higher priority streams (simplified)
+            
+            available_bandwidth = Link_speed - r_H
+            if available_bandwidth <= 0:
+                raise ValueError("Link capacity exceeded by reserved higher priority rate")
+            
+            hop_delay = (b_H + b_C + l_L) / available_bandwidth
+            
         else:
-            interference_delay = 0  # No interference if there's no queue (e.g., at end systems)
+            hop_delay = 0  # No queues mean no delay at end systems
         
-        return transmission_delay + propagation_delay + interference_delay
+        return transmission_delay + propagation_delay + hop_delay
 
     def calculate_worst_case_delay(self, stream: Stream) -> float:
         if not stream.path:
@@ -170,8 +182,7 @@ def main():
     tool.read_topology('small-topology.csv')
     tool.analyze()
     tool.print_total_max_delay()
-    tool.write_solution('small-solution_test.csv')
+    tool.write_solution('small-solution-test.csv')
 
 if __name__ == "__main__":
     main()
-    
