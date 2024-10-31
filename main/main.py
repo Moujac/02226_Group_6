@@ -1,4 +1,4 @@
-import csv
+import csv, argparse
 from collections import defaultdict
 import networkx as nx
 from typing import Dict, List, Tuple, Set
@@ -187,31 +187,46 @@ def read_streams(filename: Path) -> List[Stream]:
         next(reader)  # Skip header
         return [Stream.from_row(row) for row in reader]
 
-def main():
-    base_path = Path('../test_cases/test_case_random_geometric')
-    topology = NetworkTopology(base_path / 'topology.csv')
-    streams = read_streams(base_path / 'streams.csv')
-    delay_calculator = ATS_Delay_Calculator(link_rate=1e8)
 
-    with open(base_path/'solution.csv', 'w', newline='') as f:
+def main():
+    # Set up argument parser
+    parser = argparse.ArgumentParser(description='Analyze network topology and stream delays.')
+    parser.add_argument('base_path', type=Path, 
+                        help='Base path to the directory containing topology.csv, streams.csv')
+    
+    # Parse arguments
+    args = parser.parse_args()
+   
+    output_path = args.base_path / 'solution.csv'
+    
+    # Load topology and streams
+    topology = NetworkTopology(args.base_path / 'topology.csv')
+    streams = read_streams(args.base_path / 'streams.csv')
+    
+    # Initialize delay calculator
+    delay_calculator = ATS_Delay_Calculator(link_rate=1e8)
+    
+    # Write results
+    with open(output_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['StreamName', 'MaxE2E(us)', 'Deadline(us)', 'Path'])
-
+        
         for stream in streams:
             path = topology.find_shortest_path(stream)
             stream.path = path
             
             if not path:
                 continue
-                
+            
             max_e2e = delay_calculator.calculate_total_delay(stream, topology)
-
             writer.writerow([
                 stream.name,
                 f"{max_e2e:.1f}",
                 stream.deadline,
                 '->'.join(path)
             ])
+    
+    print(f"Analysis complete. Results written to {output_path}")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
