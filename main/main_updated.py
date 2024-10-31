@@ -193,7 +193,7 @@ def main():
     streams = read_streams(base_path / 'streams.csv')
     delay_calculator = ATS_Delay_Calculator(link_rate=1e8)
 
-    with open('solution_test.csv', 'w', newline='') as f:
+    with open(base_path/'solution.csv', 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['StreamName', 'MaxE2E(us)', 'Deadline(us)', 'Path'])
 
