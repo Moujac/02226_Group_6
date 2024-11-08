@@ -135,8 +135,8 @@ def generate_streams(devices):
     # Write to streams.csv
     with open(os.path.join(OUTPUT_DIR, 'streams.csv'), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['PCP', 'StreamName', 'StreamType', 'SourceNode', 'DestinationNode', 
-                        'Size', 'Period', 'Deadline'])  # Header
+        # writer.writerow(['PCP', 'StreamName', 'StreamType', 'SourceNode', 'DestinationNode', 
+        #                 'Size', 'Period', 'Deadline'])  # Header
         for stream in streams:
             writer.writerow(stream)
     return streams
@@ -184,7 +184,7 @@ def generate_ned_file(devices, links):
     ned_lines.append('import inet.node.tsn.TsnDevice;')
     ned_lines.append('import inet.node.tsn.TsnSwitch;')
     ned_lines.append('')
-    ned_lines.append(f'network TSN_Network {{')
+    ned_lines.append(f'network TSN_Network extends TsnNetworkBase{{')
     ned_lines.append('    @display("bgb=1000,1000");')
     ned_lines.append('    submodules:')
     for device in devices:
@@ -203,9 +203,145 @@ def generate_ned_file(devices, links):
         ned_file.write('\n'.join(ned_lines))
 
 def generate_ini_file(devices, streams):
-    """Generates OMNeT++ initialization file resembling the provided sample"""
-    # TODO: Implement this function
+    """Generates OMNeT++ initialization file resembling the provided sample, adapting node parts"""
     ini_lines = []
+
+    # Fixed initial lines
+    ini_fixed_lines = [
+        '[General]',
+        'network = tsn.TSN_Network',
+        'sim-time-limit = 1.0s',
+        '',
+        '# enable multiple canvas visualizers',
+        '*.visualizer.typename = "IntegratedMultiCanvasVisualizer"',
+        '',
+        '# network route activity visualization',
+        '*.visualizer.numNetworkRouteVisualizers = 1',
+        '*.visualizer.networkRouteVisualizer[*].displayRoutes = true',
+        '*.visualizer.networkRouteVisualizer[0].packetFilter = "\\"ats*\\""',
+        '*.visualizer.networkRouteVisualizer[0].lineColor = "red1"',
+        '',
+        '*.*.eth[*].bitrate = 1Gbps',
+        '',
+        '# packet processing delay',
+        '*.*.bridging.directionReverser.delayer.typename = "PacketDelayer"',
+        '*.*.bridging.directionReverser.delayer.delay = 8us',
+        '',
+    ]
+
+    ini_lines.extend(ini_fixed_lines)
+
+    es_nodes = [device[1] for device in devices if device[0] == 'ES']
+
+    source_streams_per_node = {node: [] for node in es_nodes}
+    dest_streams_per_node = {node: [] for node in es_nodes}
+
+    stream_to_port = {}
+    port_counter = 1
+    for stream in streams:
+        pcp, stream_name, stream_type, source_node, dest_node, size, period, deadline = stream
+        stream_to_port[stream_name] = port_counter
+        port_counter += 1
+        source_streams_per_node[source_node].append(stream)
+        dest_streams_per_node[dest_node].append(stream)
+
+    for node in es_nodes:
+        num_source_apps = len(source_streams_per_node[node])
+        num_dest_apps = len(dest_streams_per_node[node])
+        num_apps = num_source_apps + num_dest_apps
+        ini_lines.append(f'*.{node}.numApps = {num_apps}')
+
+    for node in es_nodes:
+        app_index = 0
+        source_streams = source_streams_per_node[node]
+        if source_streams:
+            app_indices = f'[{app_index}..{app_index+len(source_streams)-1}]' if len(source_streams) > 1 else f'[{app_index}]'
+            ini_lines.append(f'*.{node}.app{app_indices}.typename = "UdpSourceApp"')
+            for stream in source_streams:
+                pcp, stream_name, stream_type, source_node, dest_node, size, period, deadline = stream
+                port = stream_to_port[stream_name]
+                ini_lines.append(f'*.{node}.app[{app_index}].display-name = "{stream_type}"')
+                ini_lines.append(f'*.{node}.app[{app_index}].io.destAddress = "{dest_node}"')
+                ini_lines.append(f'*.{node}.app[{app_index}].io.destPort = {port}')
+                ini_lines.append(f'*.{node}.app[{app_index}].source.productionInterval = {period}us')
+                ini_lines.append(f'*.{node}.app[{app_index}].source.initialProductionOffset = {period}us')
+                ini_lines.append(f'*.{node}.app[{app_index}].source.packetLength = {size}B')
+                app_index += 1
+        dest_streams = dest_streams_per_node[node]
+        if dest_streams:
+            app_indices = f'[{app_index}..{app_index+len(dest_streams)-1}]' if len(dest_streams) > 1 else f'[{app_index}]'
+            ini_lines.append(f'*.{node}.app{app_indices}.typename = "UdpSinkApp"')
+            for stream in dest_streams:
+                pcp, stream_name, stream_type, source_node, dest_node, size, period, deadline = stream
+                port = stream_to_port[stream_name]
+                ini_lines.append(f'*.{node}.app[{app_index}].io.localPort = {port}')
+                app_index += 1
+
+    ini_fixed_lines_after_nodes = [
+        '',
+        '*.ES*.hasUdp = firstAvailableOrEmpty("Udp") != ""',
+        '',
+        '# steering stream identification and coding',
+        '*.ES*.bridging.streamIdentifier.identifier.mapping = ',
+    ]
+    newline = ' [{stream: "ats", packetFilter: expr('
+    for i in range(1,port_counter):
+        # udp.destPort == 1,
+        newline += f'udp.destPort == {i} || ' if i < port_counter-1 else f'udp.destPort == {i}'
+    newline += ')}]'
+    ini_fixed_lines_after_nodes += [
+        f'{newline}',
+        '',
+        '*.ES*.bridging.streamFilter.ingress.classifier.mapping = { "ats": 0 }',
+        '*.ES*.eth[*].macLayer.queue.numTrafficClasses = 1',
+        '*.ES*.eth[*].macLayer.queue.numQueues = 1',
+        '*.ES*.eth[*].macLayer.queue.*[0].display-name = "ats"',
+        '',
+        '# client stream encoding',
+        '*.ES*.bridging.streamCoder.encoder.mapping = [{stream: "ats", pcp: 6}]',
+        '',
+        '# enable streams',
+        '*.Switch*.hasIncomingStreams = true',
+        '*.Switch*.hasOutgoingStreams = true',
+        '*.ES*.hasIncomingStreams = true',
+        '*.ES*.hasOutgoingStreams = true',
+        '',
+        '# stream coder mappings for switches',
+        '*.Switch*.bridging.streamCoder.encoder.mapping = [{stream: "ats", pcp: 6}]',
+        '*.Switch*.bridging.streamCoder.decoder.mapping = [{stream: "ats", pcp: 6}]',
+        '*.Switch*.eth[*].macLayer.queue.classifier.mapping = [[0], [0], [0], [0], [0], [0], [0], [0]]',
+        '',
+        '# enable ingress per-stream filtering',
+        '*.Switch*.hasIngressTrafficFiltering = true',
+        '',
+        '# enable egress traffic shaping',
+        '*.*.hasEgressTrafficShaping = true',
+        '',
+        '# asynchronous shaper traffic metering',
+        '*.Switch*.bridging.streamFilter.ingress.numStreams = 1',
+        '*.Switch*.bridging.streamFilter.ingress.classifier.mapping = { "ats": 0 }',
+        '*.Switch*.bridging.streamFilter.ingress.*[0].display-name = "ats"',
+        '*.Switch*.bridging.streamFilter.ingress.meter[*].typename = "EligibilityTimeMeter"',
+        '*.Switch*.bridging.streamFilter.ingress.filter[*].typename = "EligibilityTimeFilter"',
+        '',
+        '*.Switch*.bridging.streamFilter.ingress.meter[0].committedInformationRate = 10Mbps',
+        '*.Switch*.bridging.streamFilter.ingress.meter[0].committedBurstSize = 500B',
+        '',
+        '# asynchronous traffic shaping',
+        '*.Switch*.eth[*].macLayer.queue.numTrafficClasses = 1',
+        '*.Switch*.eth[*].macLayer.queue.numQueues = 1',
+        '*.Switch*.eth[*].macLayer.queue.*[0].display-name = "ats"',
+        '*.Switch*.eth[*].macLayer.queue.queue[*].typename = "EligibilityTimeQueue"',
+        '*.Switch*.eth[*].macLayer.queue.transmissionSelectionAlgorithm[*].typename = "Ieee8021qAsynchronousShaper"',
+        '',
+    ]
+
+    ini_lines.extend(ini_fixed_lines_after_nodes)
+
+    # Write to omnetpp.ini
+    with open(os.path.join(OUTPUT_DIR, 'omnetpp.ini'), 'w') as ini_file:
+        ini_file.write('\n'.join(ini_lines))
+
 
 def main():
     """Main execution function"""
@@ -252,7 +388,7 @@ def main():
 
         if GENERATE_OMNET_FILES:
             generate_ned_file(devices, links)
-            # generate_ini_file(devices, streams)
+            generate_ini_file(devices, streams)
 
         print(f"Generated files in {OUTPUT_DIR}:")
         print(f"- topology.csv: Network topology definition")
@@ -260,7 +396,7 @@ def main():
         print(f"- topology.png: Network visualization")
         if GENERATE_OMNET_FILES:
             print(f"- Network.ned: OMNeT++ network description")
-            # print(f"- omnetpp.ini: OMNeT++ initialization file")
+            print(f"- omnetpp.ini: OMNeT++ initialization file")
 
     except Exception as e:
         print(f"Error: {str(e)}")
