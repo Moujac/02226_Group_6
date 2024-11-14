@@ -184,7 +184,7 @@ def read_streams(filename: Path) -> List[Stream]:
     streams = []
     with open(filename, 'r') as f:
         reader = csv.reader(f)
-        next(reader)  # Skip header
+        #next(reader)  # Skip header
         return [Stream.from_row(row) for row in reader]
 
 
@@ -204,7 +204,7 @@ def main():
     streams = read_streams(args.base_path / 'streams.csv')
     
     # Initialize delay calculator
-    delay_calculator = ATS_Delay_Calculator(link_rate=1e8)
+    delay_calculator = ATS_Delay_Calculator(link_rate=1e9/8)
     
     # Write results
     with open(output_path, 'w', newline='') as f:
