@@ -1,0 +1,9 @@
+StreamName,MaxE2E(us),Deadline(us),Path
+Stream_1,62.3,3757,ES_1->Switch_1->Switch_2->Switch_4->ES_7
+Stream_2,71.8,3817,ES_2->Switch_1->Switch_2->Switch_4->Switch_3->ES_6
+Stream_3,66.7,11398,ES_3->Switch_2->Switch_1->ES_1
+Stream_4,74.4,13057,ES_4->Switch_2->Switch_4->Switch_3->ES_5
+Stream_5,84.5,17389,ES_5->Switch_3->Switch_4->Switch_2->ES_3
+Stream_6,75.9,9845,ES_6->Switch_3->Switch_4->ES_8
+Stream_7,113.2,2701,ES_7->Switch_4->Switch_2->Switch_1->ES_2
+Stream_8,108.7,1381,ES_8->Switch_4->Switch_2->ES_4

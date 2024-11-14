@@ -204,7 +204,7 @@ def main():
     streams = read_streams(args.base_path / 'streams.csv')
     
     # Initialize delay calculator
-    delay_calculator = ATS_Delay_Calculator(link_rate=1e9/8)
+    delay_calculator = ATS_Delay_Calculator(link_rate=1e9/8) # 1Gb rate, divide by 8 since stream input vals are in bytes !!!
     
     # Write results
     with open(output_path, 'w', newline='') as f:
