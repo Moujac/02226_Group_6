@@ -21,8 +21,8 @@ network TSN_Network extends TsnNetworkBase{
         ES_2.ethg++ <--> Eth1G <--> Switch_2.ethg++;
         ES_3.ethg++ <--> Eth1G <--> Switch_3.ethg++;
         ES_4.ethg++ <--> Eth1G <--> Switch_4.ethg++;
+        Switch_1.ethg++ <--> Eth1G <--> Switch_3.ethg++;
         Switch_1.ethg++ <--> Eth1G <--> Switch_2.ethg++;
-        Switch_1.ethg++ <--> Eth1G <--> Switch_4.ethg++;
-        Switch_2.ethg++ <--> Eth1G <--> Switch_3.ethg++;
+        Switch_2.ethg++ <--> Eth1G <--> Switch_4.ethg++;
         Switch_3.ethg++ <--> Eth1G <--> Switch_4.ethg++;
 }
