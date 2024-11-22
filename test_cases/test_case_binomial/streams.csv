@@ -1,8 +1,4 @@
-2,Stream_1,ats,ES_1,ES_7,1297,1000,3757
-1,Stream_2,ats,ES_2,ES_6,635,2000,3817
-5,Stream_3,ats,ES_3,ES_1,1437,500,11398
-1,Stream_4,ats,ES_4,ES_5,522,1000,13057
-0,Stream_5,ats,ES_5,ES_3,510,2000,17389
-1,Stream_6,ats,ES_6,ES_8,1214,1000,9845
-5,Stream_7,ats,ES_7,ES_2,1190,1000,2701
-2,Stream_8,ats,ES_8,ES_4,1331,500,1381
+7,Stream_1,ats,ES_1,ES_3,516,500,12948
+5,Stream_2,ats,ES_2,ES_4,1000,2000,4522
+0,Stream_3,ats,ES_3,ES_1,796,500,8607
+1,Stream_4,ats,ES_4,ES_2,617,2000,1517

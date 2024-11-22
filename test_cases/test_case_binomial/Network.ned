@@ -16,20 +16,14 @@ network TSN_Network extends TsnNetworkBase{
         ES_2: TsnDevice {}
         ES_3: TsnDevice {}
         ES_4: TsnDevice {}
-        ES_5: TsnDevice {}
-        ES_6: TsnDevice {}
-        ES_7: TsnDevice {}
-        ES_8: TsnDevice {}
     connections:
         ES_1.ethg++ <--> Eth1G <--> Switch_1.ethg++;
-        ES_2.ethg++ <--> Eth1G <--> Switch_1.ethg++;
-        ES_3.ethg++ <--> Eth1G <--> Switch_2.ethg++;
-        ES_4.ethg++ <--> Eth1G <--> Switch_2.ethg++;
-        ES_5.ethg++ <--> Eth1G <--> Switch_3.ethg++;
-        ES_6.ethg++ <--> Eth1G <--> Switch_3.ethg++;
-        ES_7.ethg++ <--> Eth1G <--> Switch_4.ethg++;
-        ES_8.ethg++ <--> Eth1G <--> Switch_4.ethg++;
-        Switch_1.ethg++ <--> Eth1G <--> Switch_2.ethg++;
+        ES_2.ethg++ <--> Eth1G <--> Switch_2.ethg++;
+        ES_3.ethg++ <--> Eth1G <--> Switch_3.ethg++;
+        ES_4.ethg++ <--> Eth1G <--> Switch_4.ethg++;
+        Switch_1.ethg++ <--> Eth1G <--> Switch_3.ethg++;
+        Switch_1.ethg++ <--> Eth1G <--> Switch_4.ethg++;
+        Switch_2.ethg++ <--> Eth1G <--> Switch_3.ethg++;
         Switch_2.ethg++ <--> Eth1G <--> Switch_4.ethg++;
         Switch_3.ethg++ <--> Eth1G <--> Switch_4.ethg++;
 }
