@@ -4,6 +4,7 @@ import networkx as nx
 from typing import Dict, List, Tuple, Set
 from dataclasses import dataclass
 from pathlib import Path
+import time
 
 @dataclass
 class Stream:
@@ -199,13 +200,15 @@ def main():
    
     output_path = args.base_path / 'solution.csv'
     
+    start_time = time.time()
     # Load topology and streams
     topology = NetworkTopology(args.base_path / 'topology.csv')
     streams = read_streams(args.base_path / 'streams.csv')
     
     # Initialize delay calculator
     delay_calculator = ATS_Delay_Calculator(link_rate=1e9/8) # 1Gb rate, divide by 8 since stream input vals are in bytes !!!
-    
+    end_time = time.time()
+    exe_time = end_time - start_time
     # Write results
     with open(output_path, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -225,6 +228,8 @@ def main():
                 stream.deadline,
                 '->'.join(path)
             ])
+        
+        f.write(f"Runtime for the solution {exe_time:.8f} second.\n")
     
     print(f"Analysis complete. Results written to {output_path}")
 
