@@ -17,3 +17,6 @@ Stream_15,396.9,12705,ES_15->Switch_15->Switch_16->Switch_17->Switch_18->Switch_
 Stream_16,70.2,12833,ES_16->Switch_16->Switch_17->ES_17
 Stream_17,499.5,5742,ES_17->Switch_17->Switch_16->Switch_15->Switch_14->Switch_13->Switch_12->Switch_11->Switch_10->Switch_9->Switch_8->ES_8
 Stream_18,47.1,11654,ES_18->Switch_18->Switch_1->ES_1
+
+Mean E2E Delay (us),190.9
+Runtime for the solution 0.00557399 second.

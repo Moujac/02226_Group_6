@@ -209,7 +209,9 @@ def main():
     delay_calculator = ATS_Delay_Calculator(link_rate=1e9/8) # 1Gb rate, divide by 8 since stream input vals are in bytes !!!
     end_time = time.time()
     exe_time = end_time - start_time
-    # Write results
+    total_delay_sum = 0
+    valid_stream_count = 0
+    
     with open(output_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['StreamName', 'MaxE2E(us)', 'Deadline(us)', 'Path'])
@@ -222,6 +224,9 @@ def main():
                 continue
             
             max_e2e = delay_calculator.calculate_total_delay(stream, topology)
+            total_delay_sum += max_e2e
+            valid_stream_count += 1
+
             writer.writerow([
                 stream.name,
                 f"{max_e2e:.1f}",
@@ -229,9 +234,20 @@ def main():
                 '->'.join(path)
             ])
         
+        # Write mean E2E delay
+        if valid_stream_count > 0:
+            mean_e2e_delay = total_delay_sum / valid_stream_count
+        else:
+            mean_e2e_delay = 0
+        
+        writer.writerow([])
+        writer.writerow(['Mean E2E Delay (us)', f"{mean_e2e_delay:.1f}"])
+        
+        end_time = time.time()
+        exe_time = end_time - start_time
         f.write(f"Runtime for the solution {exe_time:.8f} second.\n")
     
-    print(f"Analysis complete. Results written to {output_path}")
+    print(f"Analysis complete. Mean E2E Delay: {mean_e2e_delay:.1f} us. Results written to {output_path}")
 
 if __name__ == '__main__':
     main()
