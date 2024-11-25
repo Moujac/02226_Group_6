@@ -1,0 +1,13 @@
+Stream Name	Sink Endpoint
+Stream_1	ES_9.app[1].sink
+Stream_2	ES_6.app[1].sink
+Stream_3	ES_11.app[1].sink
+Stream_4	ES_7.app[1].sink
+Stream_5	ES_11.app[2].sink
+Stream_6	ES_9.app[2].sink
+Stream_7	ES_12.app[1].sink
+Stream_8	ES_11.app[3].sink
+Stream_9	ES_2.app[1].sink
+Stream_10	ES_1.app[1].sink
+Stream_11	ES_3.app[1].sink
+Stream_12	ES_4.app[1].sink
