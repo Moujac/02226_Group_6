@@ -1,5 +1,16 @@
 StreamName,MaxE2E(us),Deadline(us),Path
-Stream_1,27.2,11704,ES_1->Switch_1->Switch_4->ES_4
-Stream_2,22.6,8977,ES_2->Switch_2->Switch_3->ES_3
-Stream_3,77.1,1676,ES_3->Switch_3->Switch_2->Switch_1->ES_1
-Stream_4,52.8,15461,ES_4->Switch_4->Switch_1->ES_1
+Stream_1,53.4,8242,ES_1->Switch_1->Switch_12->Switch_11->Switch_10->Switch_9->ES_9
+Stream_2,73.8,8648,ES_2->Switch_2->Switch_3->Switch_4->Switch_5->Switch_6->ES_6
+Stream_3,91.7,8168,ES_3->Switch_3->Switch_2->Switch_1->Switch_12->Switch_11->ES_11
+Stream_4,81.3,14932,ES_4->Switch_4->Switch_5->Switch_6->Switch_7->ES_7
+Stream_5,151.4,3539,ES_5->Switch_5->Switch_4->Switch_3->Switch_2->Switch_1->Switch_12->Switch_11->ES_11
+Stream_6,67.7,8085,ES_6->Switch_6->Switch_7->Switch_8->Switch_9->ES_9
+Stream_7,105.9,19213,ES_7->Switch_7->Switch_8->Switch_9->Switch_10->Switch_11->Switch_12->ES_12
+Stream_8,124.7,14726,ES_8->Switch_8->Switch_9->Switch_10->Switch_11->ES_11
+Stream_9,122.1,5144,ES_9->Switch_9->Switch_10->Switch_11->Switch_12->Switch_1->Switch_2->ES_2
+Stream_10,144.5,6967,ES_10->Switch_10->Switch_11->Switch_12->Switch_1->ES_1
+Stream_11,198.5,9388,ES_11->Switch_11->Switch_12->Switch_1->Switch_2->Switch_3->ES_3
+Stream_12,187.2,5281,ES_12->Switch_12->Switch_1->Switch_2->Switch_3->Switch_4->ES_4
+
+Mean E2E Delay (us),116.8
+Runtime for the solution 0.01996255 second.

@@ -1,5 +1,0 @@
-StreamName,MaxE2E(us),Deadline(us),Path
-Stream_1,40.6,13791,ES_1->Switch_1->Switch_4->ES_4
-Stream_2,41.6,10547,ES_2->Switch_2->Switch_3->ES_3
-Stream_3,52.6,4632,ES_3->Switch_3->Switch_2->ES_2
-Stream_4,68.3,12399,ES_4->Switch_4->Switch_3->ES_3
