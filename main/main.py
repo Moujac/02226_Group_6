@@ -200,17 +200,19 @@ def main():
    
     output_path = args.base_path / 'solution.csv'
     
-    start_time = time.time()
+    start_time = time.perf_counter()
     # Load topology and streams
     topology = NetworkTopology(args.base_path / 'topology.csv')
     streams = read_streams(args.base_path / 'streams.csv')
     
     # Initialize delay calculator
     delay_calculator = ATS_Delay_Calculator(link_rate=1e9/8) # 1Gb rate, divide by 8 since stream input vals are in bytes !!!
-    end_time = time.time()
+    end_time = time.perf_counter()
     exe_time = end_time - start_time
+    print(f"Runtime for the solution {exe_time:.40f} second.\n")
     total_delay_sum = 0
     valid_stream_count = 0
+    
     
     with open(output_path, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -243,9 +245,9 @@ def main():
         writer.writerow([])
         writer.writerow(['The Mean E2E Delay = ' f"{mean_e2e_delay:.1f}" '(us)'])
         
-        end_time = time.time()
-        exe_time = end_time - start_time
-        f.write(f"Runtime for the solution {exe_time:.8f} second.\n")
+        # end_time = time.time()
+        # exe_time = end_time - start_time
+        f.write(f"Runtime for the solution {exe_time:.40f} second.\n")
     
     print(f"Analysis complete. The average end-to-end delay is {mean_e2e_delay:.1f} μs. Results have been saved to: {output_path}")
 

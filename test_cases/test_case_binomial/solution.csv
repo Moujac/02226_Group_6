@@ -4,5 +4,5 @@ Stream_2,32.0,4522,ES_2->Switch_2->Switch_4->ES_4
 Stream_3,33.7,8607,ES_3->Switch_3->Switch_1->ES_1
 Stream_4,35.7,1517,ES_4->Switch_4->Switch_2->ES_2
 
-Mean E2E Delay (us),29.5
-Runtime for the solution 0.00799775 second.
+The Mean E2E Delay = 29.5(us)
+Runtime for the solution 0.0004649999973480589687824249267578125000 second.
