@@ -1,10 +1,17 @@
-## How to run analysis tool!
-Simply go into the main directory and run main.py with chosen testcase path as argument.
+# How to Run the Analysis Tool
 
-So open a terminal and do "py main.py ..\test_cases\test_case_binomial\" for binomial test. 
+Follow these steps to run the analysis tool:
 
-This requires that chosen path contains streams.csv and topology.csv files.
+1. Navigate to the main directory.
+2. Run `main.py` with the chosen testcase path as an argument.
 
-This results in the creation of solution.csv in given directory, which contains result for each stream, overall result, and runtime.
+## Accessing the Tool
 
-Warning: The tool does not expect headers on the stream.csv or topology.csv files!
+Use the tool via the CLI. Provide the base path to a folder containing the input streams and topology configuration files.
+
+### Example
+
+For the binomial test case:
+
+```bash
+py main.py ..\test_cases\test_case_binomial\
