@@ -241,13 +241,13 @@ def main():
             mean_e2e_delay = 0
         
         writer.writerow([])
-        writer.writerow(['Mean E2E Delay (us)', f"{mean_e2e_delay:.1f}"])
+        writer.writerow(['The Mean E2E Delay = ' f"{mean_e2e_delay:.1f}" '(us)'])
         
         end_time = time.time()
         exe_time = end_time - start_time
         f.write(f"Runtime for the solution {exe_time:.8f} second.\n")
     
-    print(f"Analysis complete. Mean E2E Delay: {mean_e2e_delay:.1f} us. Results written to {output_path}")
+    print(f"Analysis complete. The average end-to-end delay is {mean_e2e_delay:.1f} μs. Results have been saved to: {output_path}")
 
 if __name__ == '__main__':
     main()
