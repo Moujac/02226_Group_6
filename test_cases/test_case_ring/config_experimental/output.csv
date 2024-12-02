@@ -1,0 +1,16 @@
+*.Switch*.bridging.streamFilter.ingress.meter[0].committedInformationRate = 0.00Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[0].committedBurstSize = 0.0B
+*.Switch*.bridging.streamFilter.ingress.meter[1].committedInformationRate = 0.00Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[1].committedBurstSize = 0.0B
+*.Switch*.bridging.streamFilter.ingress.meter[2].committedInformationRate = 0.00Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[2].committedBurstSize = 0.0B
+*.Switch*.bridging.streamFilter.ingress.meter[3].committedInformationRate = 11.83Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[3].committedBurstSize = 2290.0B
+*.Switch*.bridging.streamFilter.ingress.meter[4].committedInformationRate = 6.72Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[4].committedBurstSize = 1680.0B
+*.Switch*.bridging.streamFilter.ingress.meter[5].committedInformationRate = 27.76Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[5].committedBurstSize = 1735.0B
+*.Switch*.bridging.streamFilter.ingress.meter[6].committedInformationRate = 18.08Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[6].committedBurstSize = 2179.0B
+*.Switch*.bridging.streamFilter.ingress.meter[7].committedInformationRate = 14.19Mbps
+*.Switch*.bridging.streamFilter.ingress.meter[7].committedBurstSize = 1255.0B

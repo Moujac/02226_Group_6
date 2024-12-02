@@ -1,0 +1,68 @@
+#trying to aggregate what the parameter should have been into each priority parameter
+#hmm, many fine, some are not. weird
+
+Name	Value	
+TSN_Network.ES_1.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000027 (998)	
+TSN_Network.ES_6.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000024 (998)	
+TSN_Network.ES_6.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000031 (1998)	
+TSN_Network.ES_7.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000045 (998)	
+TSN_Network.ES_7.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000068 (498)	
+TSN_Network.ES_7.app[3].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000064 (498)	
+TSN_Network.ES_11.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000041 (1998)	
+TSN_Network.ES_11.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000026 (998)	
+TSN_Network.ES_14.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000039 (998)	
+TSN_Network.ES_15.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.034910 (463)	
+TSN_Network.ES_16.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000040 (998)	
+TSN_Network.ES_17.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000038 (998)	
+TSN_Network.ES_18.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.029312 (469)	
+TSN_Network.ES_18.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000020 (1998)	
+TSN_Network.ES_19.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000014 (1998)	
+TSN_Network.ES_19.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000019 (1998)	
+TSN_Network.ES_20.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000054 (998)	
+TSN_Network.ES_20.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000040 (998)	
+TSN_Network.ES_21.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000025 (998)	
+TSN_Network.ES_22.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.035067 (928)	
+TSN_Network.ES_24.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000016 (498)	
+TSN_Network.ES_25.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000042 (1998)	
+TSN_Network.ES_26.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000043 (498)	
+TSN_Network.ES_27.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000057 (498)	
+TSN_Network.ES_28.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000030 (998)	
+TSN_Network.ES_28.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000043 (998)	
+TSN_Network.ES_28.app[3].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000036 (998)	
+TSN_Network.ES_29.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000025 (1998)	
+TSN_Network.ES_30.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000033 (1998)	
+TSN_Network.ES_31.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000061 (1998)	
+TSN_Network.ES_31.app[2].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000022 (1998)	
+TSN_Network.ES_32.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.000020 (498)	

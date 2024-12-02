@@ -1,0 +1,11 @@
+Very high values...
+
+Name	Value	
+TSN_Network.ES_1.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.034698 (1868)	
+TSN_Network.ES_2.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.041001 (457)	
+TSN_Network.ES_3.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.048744 (1802)	
+TSN_Network.ES_4.app[1].sink		
+meanBitLifeTimePerPacket:vector (vector)	0.026402 (472)	
