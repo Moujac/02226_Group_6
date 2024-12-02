@@ -1,0 +1,36 @@
+StreamName,MaxE2E(us),Deadline(us),Path
+Stream_1,98.9,1147,ES_1->Switch_1->Switch_2->Switch_3->Switch_4->Switch_8->Switch_12->Switch_16->ES_31
+Stream_2,85.7,7299,ES_2->Switch_1->Switch_5->Switch_6->Switch_10->Switch_14->ES_27
+Stream_3,73.9,13799,ES_3->Switch_2->Switch_6->Switch_10->Switch_14->ES_28
+Stream_4,49.4,1706,ES_4->Switch_2->Switch_3->ES_6
+Stream_5,86.8,15372,ES_5->Switch_3->Switch_2->Switch_1->ES_1
+Stream_6,43.4,9395,ES_6->Switch_3->Switch_7->Switch_11->ES_22
+Stream_7,125.6,14743,ES_7->Switch_4->Switch_3->Switch_2->Switch_6->Switch_10->ES_20
+Stream_8,77.9,17216,ES_8->Switch_4->Switch_3->Switch_7->Switch_11->ES_21
+Stream_9,69.1,7413,ES_9->Switch_5->Switch_9->Switch_13->Switch_14->ES_28
+Stream_10,106.5,16588,ES_10->Switch_5->Switch_1->Switch_2->Switch_3->Switch_4->ES_7
+Stream_11,58.5,4408,ES_11->Switch_6->Switch_10->ES_19
+Stream_12,118.9,3454,ES_12->Switch_6->Switch_5->Switch_9->Switch_13->ES_25
+Stream_13,60.6,17261,ES_13->Switch_7->Switch_11->Switch_15->ES_30
+Stream_14,148.0,15704,ES_14->Switch_7->Switch_6->Switch_5->Switch_9->Switch_13->ES_26
+Stream_15,50.6,10850,ES_15->Switch_8->Switch_12->Switch_16->ES_31
+Stream_16,67.4,11072,ES_16->Switch_8->Switch_7->Switch_3->ES_6
+Stream_17,250.1,10008,ES_17->Switch_9->Switch_5->Switch_1->Switch_2->Switch_3->Switch_4->ES_7
+Stream_18,248.6,12096,ES_18->Switch_9->Switch_5->Switch_1->Switch_2->Switch_3->Switch_4->ES_7
+Stream_19,52.2,16183,ES_19->Switch_10->Switch_9->ES_18
+Stream_20,63.6,7153,ES_20->Switch_10->Switch_11->Switch_15->ES_29
+Stream_21,101.8,7300,ES_21->Switch_11->Switch_7->Switch_8->ES_15
+Stream_22,51.1,13346,ES_22->Switch_11->Switch_10->ES_19
+Stream_23,48.6,10287,ES_23->Switch_12->Switch_16->ES_32
+Stream_24,159.7,13042,ES_24->Switch_12->Switch_11->Switch_10->Switch_14->ES_28
+Stream_25,40.4,18023,ES_25->Switch_13->Switch_9->ES_18
+Stream_26,148.6,3178,ES_26->Switch_13->Switch_9->Switch_5->Switch_6->ES_11
+Stream_27,92.7,13895,ES_27->Switch_14->Switch_10->Switch_6->ES_11
+Stream_28,133.2,10730,ES_28->Switch_14->Switch_13->Switch_9->ES_17
+Stream_29,147.3,15010,ES_29->Switch_15->Switch_14->Switch_10->ES_20
+Stream_30,116.5,13759,ES_30->Switch_15->Switch_11->Switch_7->Switch_8->ES_16
+Stream_31,172.3,7860,ES_31->Switch_16->Switch_12->Switch_8->Switch_7->ES_14
+Stream_32,33.3,7614,ES_32->Switch_16->Switch_12->ES_24
+
+The Mean E2E Delay = 99.4(us)
+Runtime for the solution 0.0076800999813713133335113525390625000000 second.
